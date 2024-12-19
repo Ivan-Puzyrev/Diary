@@ -1,6 +1,7 @@
 package com.example.diary.presentation
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -63,6 +64,8 @@ class TaskListActivity : AppCompatActivity() {
                 binding.calendar.setDate(
                     Date(filteredHighlightedDays[0].calendar.time.toInstant().toEpochMilli())
                 )
+                Log.d("500106", filteredHighlightedDays[0].toString())
+
                 updateStateOfScreen(filteredHighlightedDays[0], calendarView, taskViewManager)
             } else {
                 Toast.makeText(this, "No more tasks available", Toast.LENGTH_SHORT).show()
@@ -116,15 +119,14 @@ class TaskListActivity : AppCompatActivity() {
         calendarView: CalendarView,
         taskViewManager: TaskViewManager
     ) {
-        taskViewManager.highlightTheDaysWithTasks()
         taskViewManager.showTasksOfTheDay(calendarDay)
         updateCurrentDate(calendarView)
         setupTheArrowsAlpha(calendarView, taskViewManager)
     }
 
     private fun updateStateOfScreen(calendarView: CalendarView, taskViewManager: TaskViewManager) {
-        taskViewManager.highlightTheDaysWithTasks()
         taskViewManager.showTasksOfTheDay(CalendarDay(calendarView.firstSelectedDate))
+        taskViewManager.highlightTheDaysWithTasks()
         updateCurrentDate(calendarView)
         setupTheArrowsAlpha(calendarView, taskViewManager)
     }
