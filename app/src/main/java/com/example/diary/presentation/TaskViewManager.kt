@@ -22,15 +22,8 @@ class TaskViewManager(
     private val constraintLayout: ConstraintLayout,
     private val calendarView: com.applandeo.materialcalendarview.CalendarView
 ) {
-
+    var sortedHighlightedDays = listOf<CalendarDay>()
     var taskList: List<Task> = listOf()
-        set(value) {
-            if (field.size != value.size) {
-                field = value
-                highlightTheDaysWithTasks()
-                showTasksOfTheDay(CalendarDay(calendarView.firstSelectedDate))
-            }
-        }
 
     private var hoursTV: List<View>
     private val viewColumns: MutableList<MutableList<View>> = mutableListOf()
@@ -58,7 +51,11 @@ class TaskViewManager(
             shape.setStroke(3, backgroundColor)
         }
 
-        textViewBinding.timeTV.setText("с ${task.dateStart.hour} до ${task.dateFinish.hour}")
+        textViewBinding.timeTV.text = context.getString(
+            R.string.from_to,
+            task.dateStart.hour.toString(),
+            task.dateFinish.hour.toString()
+        )
         textViewBinding.taskTV.setText(task.name)
 
         textView.setOnClickListener {
@@ -193,7 +190,9 @@ class TaskViewManager(
     private fun showHoursTV(taskList: List<Task>) {
         val minStartHour = taskList.minBy { it.dateStart.hour }.dateStart.hour
         val isMaxFinishZero = taskList.minBy { it.dateFinish.hour }.dateFinish.hour.equals(0)
-        val maxFinishHour = if (isMaxFinishZero) {24} else {
+        val maxFinishHour = if (isMaxFinishZero) {
+            24
+        } else {
             taskList.maxBy { it.dateFinish.hour }.dateFinish.hour
         }
 
@@ -234,16 +233,17 @@ class TaskViewManager(
 
     }
 
-    private fun highlightTheDaysWithTasks() {
-        val days = mutableSetOf<CalendarDay>()
+    fun highlightTheDaysWithTasks() {
+        val highlightedDays = mutableSetOf<CalendarDay>()
         taskList.forEach {
             val day = java.util.Calendar.getInstance()
             day.set(it.dateStart.year, it.dateStart.month.value - 1, it.dateStart.dayOfMonth)
             val calendarDay = CalendarDay(day)
             calendarDay.labelColor = R.color.white
             calendarDay.backgroundResource = R.drawable.calender_highlight
-            days.add(calendarDay)
+            highlightedDays.add(calendarDay)
         }
-        calendarView.setCalendarDays(days.toList())
+        sortedHighlightedDays = highlightedDays.sortedBy { it.calendar.time }.toList()
+        calendarView.setCalendarDays(highlightedDays.toList())
     }
 }

@@ -3,7 +3,6 @@ package com.example.diary.data
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
@@ -27,7 +26,7 @@ class JsonDB @Inject constructor(
     }
 
     private val taskListDTO = mutableListOf<TaskJsonDTO>()
-    private val _taskListDtoLD = MutableLiveData<List<TaskJsonDTO>>(taskListDTO)
+    private val _taskListDtoLD = MutableLiveData<List<TaskJsonDTO>>()
     val taskListDtoLD: LiveData<List<TaskJsonDTO>>
         get() = _taskListDtoLD
 
@@ -49,12 +48,11 @@ class JsonDB @Inject constructor(
     private suspend fun loadTasksFromFile() {
         val file = File(application.filesDir, fileName)
         val gson = Gson()
-        val type = object : TypeToken<List<TaskJsonDTO>>() {}.type
+        val type = object : TypeToken<List<TaskJsonDTO>>(){}.type
 
         withContext(Dispatchers.IO) {
             if (file.exists()) {
                 val fileContent = file.readText()
-                Log.d("Json", fileContent)
                 gson.fromJson<List<TaskJsonDTO>?>(fileContent, type).forEach {
                     taskListDTO.add(it)
                 }
@@ -67,6 +65,8 @@ class JsonDB @Inject constructor(
                     saveTasksToFile()
                     _taskListDtoLD.postValue(taskListDTO)
                 }
+                saveTasksToFile()
+                _taskListDtoLD.postValue(taskListDTO)
             }
         }
     }

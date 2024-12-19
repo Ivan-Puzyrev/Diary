@@ -3,7 +3,6 @@ package com.example.diary.presentation
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.widget.NumberPicker
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -22,13 +21,13 @@ class AddTaskActivity : AppCompatActivity() {
         (application as DiaryApp).component
     }
 
-    lateinit var binding: ActivityAddTaskBinding
-    lateinit var taskList: List<Task>
+    private lateinit var binding: ActivityAddTaskBinding
+    private var taskList: List<Task> = mutableListOf()
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
     private val addTaskViewModel by lazy {
-        ViewModelProvider(this, viewModelFactory).get(AddTaskViewModel::class)
+        ViewModelProvider(this, viewModelFactory)[AddTaskViewModel::class]
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,9 +36,9 @@ class AddTaskActivity : AppCompatActivity() {
         binding = ActivityAddTaskBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        addTaskViewModel.taskListLD.observe(this, {
+        addTaskViewModel.taskListLD.observe(this) {
             taskList = it
-        })
+        }
         val date = intent.getLongExtra(KEY_ADD_TASK_ACTIVITY, 0)
 
         val itemsTimeStart = Array(24) { "0" }
@@ -53,12 +52,14 @@ class AddTaskActivity : AppCompatActivity() {
             itemsTimeEnd[i] = "$hour:00"
         }
         itemsTimeEnd[23] = "00:00"
+
         binding.numberPickerStart.apply {
             minValue = 0
             maxValue = itemsTimeStart.size - 1
             displayedValues = itemsTimeStart
             value = 12
         }
+
         binding.numberPickerEnd.apply {
             minValue = 0
             maxValue = itemsTimeEnd.size - 1
@@ -66,32 +67,25 @@ class AddTaskActivity : AppCompatActivity() {
             value = 12
         }
 
-        binding.numberPickerStart.setOnValueChangedListener(object :
-            NumberPicker.OnValueChangeListener {
-            override fun onValueChange(picker: NumberPicker?, oldValue: Int, newValue: Int) {
-                if (newValue == 0 && binding.numberPickerEnd.value == 23) {
-                    binding.numberPickerEnd.value = 0
-                } else {
-                    if (newValue >= binding.numberPickerEnd.value) {
-                        binding.numberPickerEnd.value = newValue
-                    }
+        binding.numberPickerStart.setOnValueChangedListener { _, _, newValue ->
+            if (newValue == 0 && binding.numberPickerEnd.value == 23) {
+                binding.numberPickerEnd.value = 0
+            } else {
+                if (newValue >= binding.numberPickerEnd.value) {
+                    binding.numberPickerEnd.value = newValue
                 }
             }
-        })
+        }
 
-        binding.numberPickerEnd.setOnValueChangedListener(object :
-            NumberPicker.OnValueChangeListener {
-            override fun onValueChange(picker: NumberPicker?, oldValue: Int, newValue: Int) {
-                if (newValue == 23 && binding.numberPickerStart.value == 0) {
-                    binding.numberPickerStart.value = 23
-                } else {
-                    if (newValue <= binding.numberPickerStart.value) {
-                        binding.numberPickerStart.value = newValue
-                    }
+        binding.numberPickerEnd.setOnValueChangedListener { _, _, newValue ->
+            if (newValue == 23 && binding.numberPickerStart.value == 0) {
+                binding.numberPickerStart.value = 23
+            } else {
+                if (newValue <= binding.numberPickerStart.value) {
+                    binding.numberPickerStart.value = newValue
                 }
             }
-        })
-
+        }
 
         binding.saveButton.setOnClickListener {
             if (binding.nameEditText.text.toString().trim().isEmpty()) {
@@ -105,7 +99,7 @@ class AddTaskActivity : AppCompatActivity() {
                     Instant.ofEpochSecond(date + (binding.numberPickerEnd.value + 1) * 3600.toLong())
                         .atZone(ZoneId.systemDefault())
                 var id = 0
-                if (!(taskList == null || taskList.isEmpty())) {
+                if (taskList.isNotEmpty()) {
                     id = taskList.size
                 }
                 val task = Task(
@@ -129,6 +123,5 @@ class AddTaskActivity : AppCompatActivity() {
             launchIntent.putExtra(KEY_ADD_TASK_ACTIVITY, time)
             return launchIntent
         }
-
     }
 }
