@@ -1,7 +1,6 @@
 package com.example.diary.presentation
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -15,8 +14,6 @@ import com.example.diary.DiaryApp
 import com.example.diary.R
 import com.example.diary.databinding.ActivityTaskListBinding
 import java.time.ZoneId
-import java.util.Calendar
-import java.util.Date
 import javax.inject.Inject
 
 class TaskListActivity : AppCompatActivity() {
@@ -40,9 +37,16 @@ class TaskListActivity : AppCompatActivity() {
         val calendarView = binding.calendar.apply {
             setFirstDayOfWeek(CalendarWeekDay.MONDAY)
         }
-        updateCurrentDate(calendarView)
 
-        val taskViewManager = TaskViewManager(this, binding.tasksCL, calendarView)
+        val taskViewManager = TaskViewManager(this, binding.tasksCL)
+
+        setupNavigationButtons(calendarView, taskViewManager)
+
+        viewModel.taskListLD.observe(this) {
+            taskViewManager.taskList = it
+            calendarView.setCalendarDays(viewModel.getHighlightedDays())
+            updateStateOfScreen(calendarView, taskViewManager)
+        }
 
         calendarView.setOnCalendarDayClickListener(object : OnCalendarDayClickListener {
             override fun onClick(calendarDay: CalendarDay) {
@@ -51,46 +55,10 @@ class TaskListActivity : AppCompatActivity() {
             }
         })
 
-        viewModel.taskListLD.observe(this) {
-            taskViewManager.taskList = it
-            updateStateOfScreen(calendarView, taskViewManager)
-        }
 
-        binding.rightButton.setOnClickListener {
-            val selectedDate = calendarView.firstSelectedDate
-            val filteredHighlightedDays =
-                taskViewManager.sortedHighlightedDays.filter { it.calendar > selectedDate }.toList()
-            if (filteredHighlightedDays.isNotEmpty()) {
-                binding.calendar.setDate(
-                    Date(filteredHighlightedDays[0].calendar.time.toInstant().toEpochMilli())
-                )
-                Log.d("500106", filteredHighlightedDays[0].toString())
-
-                updateStateOfScreen(filteredHighlightedDays[0], calendarView, taskViewManager)
-            } else {
-                Toast.makeText(this, "No more tasks available", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        binding.leftButton.setOnClickListener {
-            val selectedDate = calendarView.firstSelectedDate
-            val filteredHighlightedDays =
-                taskViewManager.sortedHighlightedDays.filter { it.calendar < selectedDate }.toList()
-            if (filteredHighlightedDays.isNotEmpty()) {
-                binding.calendar.setDate(
-                    Date(
-                        filteredHighlightedDays[filteredHighlightedDays.lastIndex].calendar.time.toInstant()
-                            .toEpochMilli()
-                    )
-                )
-                updateStateOfScreen(
-                    filteredHighlightedDays[filteredHighlightedDays.lastIndex],
-                    calendarView,
-                    taskViewManager
-                )
-            } else {
-                Toast.makeText(this, "No more tasks available", Toast.LENGTH_SHORT).show()
-            }
+        binding.addButton.setOnClickListener {
+            val time = calendarView.selectedDates[0].timeInMillis / 1000
+            startActivity(AddTaskActivity.getAddTaskScreenIntent(this, time))
         }
 
         binding.calenderButton.setOnClickListener {
@@ -108,9 +76,27 @@ class TaskListActivity : AppCompatActivity() {
             }
         }
 
-        binding.addButton.setOnClickListener {
-            val time = calendarView.selectedDates[0].timeInMillis / 1000
-            startActivity(AddTaskActivity.getAddTaskScreenIntent(this, time))
+    }
+
+    private fun setupNavigationButtons(calendarView: CalendarView, taskViewManager: TaskViewManager) {
+        binding.rightButton.setOnClickListener {
+            val nextDay = viewModel.getNextHighlightedDay(calendarView.firstSelectedDate)
+            if (nextDay != null) {
+                binding.calendar.setDate(nextDay.calendar)
+                updateStateOfScreen(calendarView, taskViewManager)
+            } else {
+                Toast.makeText(this, "No more tasks available", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        binding.leftButton.setOnClickListener {
+            val previousDay = viewModel.getPreviousHighlightedDay(calendarView.firstSelectedDate)
+            if (previousDay != null) {
+                binding.calendar.setDate(previousDay.calendar)
+                updateStateOfScreen(calendarView, taskViewManager)
+            } else {
+                Toast.makeText(this, "No more tasks available", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -121,14 +107,13 @@ class TaskListActivity : AppCompatActivity() {
     ) {
         taskViewManager.showTasksOfTheDay(calendarDay)
         updateCurrentDate(calendarView)
-        setupTheArrowsAlpha(calendarView, taskViewManager)
+        updateStateOfArrows(calendarView)
     }
 
     private fun updateStateOfScreen(calendarView: CalendarView, taskViewManager: TaskViewManager) {
         taskViewManager.showTasksOfTheDay(CalendarDay(calendarView.firstSelectedDate))
-        taskViewManager.highlightTheDaysWithTasks()
         updateCurrentDate(calendarView)
-        setupTheArrowsAlpha(calendarView, taskViewManager)
+        updateStateOfArrows(calendarView)
     }
 
     private fun updateCurrentDate(calendarView: CalendarView) {
@@ -144,44 +129,19 @@ class TaskListActivity : AppCompatActivity() {
         )
     }
 
-    private fun setupTheArrowsAlpha(calendarView: CalendarView, taskViewManager: TaskViewManager) {
-        if (!isNextHighlightedDayExist(calendarView, taskViewManager)) {
+    private fun updateStateOfArrows(calendarView: CalendarView) {
+        val highlightedDays = viewModel.taskListLD.value?.let { viewModel.getHighlightedDays() }
+        if (highlightedDays?.let { viewModel.getNextHighlightedDay(calendarView.firstSelectedDate) } == null) {
             binding.rightButton.alpha = 0.5f
         } else {
             binding.rightButton.alpha = 1.0f
         }
-        if (!isPreviousHighlightedDayExist(calendarView, taskViewManager)) {
+        if (highlightedDays?.let { viewModel.getPreviousHighlightedDay(calendarView.firstSelectedDate) } == null) {
             binding.leftButton.alpha = 0.5f
         } else {
             binding.leftButton.alpha = 1.0f
         }
     }
 
-    private fun isNextHighlightedDayExist(
-        calendarView: CalendarView,
-        taskViewManager: TaskViewManager
-    ): Boolean {
-        val selectedDate = Calendar.getInstance().apply {
-            set(
-                calendarView.firstSelectedDate.time.year + 1900,
-                calendarView.firstSelectedDate.time.month,
-                calendarView.firstSelectedDate.time.date
-            )
-        }
-        val filteredHighlightedDays =
-            taskViewManager.sortedHighlightedDays.filter { it.calendar > selectedDate }
-                .toList()
-        return filteredHighlightedDays.isNotEmpty()
-    }
 
-    private fun isPreviousHighlightedDayExist(
-        calendarView: CalendarView,
-        taskViewManager: TaskViewManager
-    ): Boolean {
-        val selectedDate = calendarView.firstSelectedDate
-        val filteredHighlightedDays =
-            taskViewManager.sortedHighlightedDays.filter { it.calendar < selectedDate }
-                .toList()
-        return filteredHighlightedDays.isNotEmpty()
-    }
 }

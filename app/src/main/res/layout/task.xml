@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:background="@color/aqua_marine"
     android:orientation="vertical"
-    android:padding="2dp">
+    android:padding="3dp">
 
     <TextView
         android:id="@+id/timeTV"
@@ -18,7 +18,7 @@
         android:id="@+id/taskTV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAlignment="center"
+        android:textAlignment="viewStart"
         android:textColor="@color/black"
         android:textStyle="bold" />
 </LinearLayout>

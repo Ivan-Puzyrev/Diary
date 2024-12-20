@@ -26,6 +26,7 @@
         android:id="@+id/tasksScrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:background="@color/off_white"
         app:layout_constraintBottom_toTopOf="@+id/bottom_app_bar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -34,7 +35,8 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/tasksCL"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="@color/off_white">
 
             <ImageView
                 android:id="@+id/sleepingCatIV"
