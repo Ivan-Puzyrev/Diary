@@ -15,4 +15,9 @@
     <string name="description_hint">Описание</string>
     <string name="choose_a_time_for_the_task">Выберите время задачи</string>
     <string name="no_more_tasks_available">Заданий больше нет</string>
+    <string name="add_button">Кнопка добавить</string>
+    <string name="right_button">Правая кнопка</string>
+    <string name="left_button">Левая кнопка</string>
+    <string name="hide_calender">Спрятать календарь</string>
+    <string name="sleeping_cat">Спящая кошка</string>
 </resources>
