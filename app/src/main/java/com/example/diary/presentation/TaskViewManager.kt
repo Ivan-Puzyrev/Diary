@@ -82,6 +82,7 @@ class TaskViewManager(
         val finishHour = "${task.dateFinish.hour.toString().padStart(2, '0')}:00"
         if (task.dateFinish.hour - task.dateStart.hour < 2) {
             textViewBinding.timeTV.maxLines = 1
+            textViewBinding.taskTV.maxLines = 1
             textViewBinding.timeTV.text = context.getString(
                 R.string.from_to_1_hour,
                 startHour,
@@ -95,7 +96,7 @@ class TaskViewManager(
             )
         }
 
-        textViewBinding.taskTV.setText(task.name)
+        textViewBinding.taskTV.text = task.name
 
         textView.setOnClickListener {
             activity.startActivity(TaskDetailsActivity.getTaskDetailsIntent(activity, task.id))

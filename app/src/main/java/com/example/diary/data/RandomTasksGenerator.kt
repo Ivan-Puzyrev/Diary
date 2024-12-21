@@ -11,8 +11,6 @@ object RandomTasksGenerator {
     private const val HOUR_IN_SECONDS = MINUTE_IN_SECONDS * 60
     private const val DAY_IN_SECONDS = HOUR_IN_SECONDS * 24
 
-
-
     fun generateTasksJsonDTO(): List<TaskJsonDTO> {
         val tasksJsonDTOlist = mutableListOf<TaskJsonDTO>()
         val randomDays = getRandomDays()
