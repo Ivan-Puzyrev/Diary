@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Diary</string>
     <string name="choose_storage_type">Выберите тип хранилища</string>
+    <string name="generate_random_tasks">Сгенерировать случайные задачи</string>
+    <string name="continue_button">Продолжить</string>
+    <string name="json_file">Json-файл</string>
+    <string name="room_database">База данных Room</string>
+    <string name="no_tasks_for_this_day">На этот день нет задач</string>
+    <string name="meow">Мяу!</string>
+    <string name="from">Начало</string>
+    <string name="to">Конец</string>
+    <string name="save">СОХРАНИТЬ</string>
+    <string name="fill_in_the_name_field">Заполните название задачи</string>
+    <string name="name_hint">Задача</string>
+    <string name="description_hint">Описание</string>
+    <string name="choose_a_time_for_the_task">Выберите время задачи</string>
 </resources>

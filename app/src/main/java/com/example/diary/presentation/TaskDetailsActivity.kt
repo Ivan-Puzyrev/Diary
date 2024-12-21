@@ -41,8 +41,8 @@ class TaskDetailsActivity : AppCompatActivity() {
             binding.date.setText(
                 getString(
                     R.string.date,
-                    it.dateStart.month,
                     it.dateStart.dayOfMonth.toString(),
+                    it.dateStart.month.value.toString(),
                     it.dateStart.year.toString()
                 ))
             binding.description.setText(it.description)

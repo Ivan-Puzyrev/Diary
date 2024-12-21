@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Diary</string>
+    <string name="app_name" translatable="false">Diary</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label" translatable="false">First Fragment</string>
     <string name="second_fragment_label" translatable="false">Second Fragment</string>
@@ -56,9 +56,9 @@
     <string name="name_hint">Name</string>
     <string name="description_hint">Description</string>
     <string name="choose_a_time_for_the_task">Choose a time for the task</string>
-    <string name="time">%1$s - %2$s</string>
-    <string name="date">%1$s %2$s, %3$s</string>
-    <string name="dd_mm_yyyy">%1$s.%2$s.%3$s</string>
-    <string name="from_to_1_hour">%1$s-%2$s</string>
-    <string name="from_to">%1$s -\n%2$s</string>
+    <string name="time" translatable="false">%1$s - %2$s</string>
+    <string name="date" translatable="false">%1$s.%2$s.%3$s</string>
+    <string name="dd_mm_yyyy" translatable="false">%1$s.%2$s.%3$s</string>
+    <string name="from_to_1_hour" translatable="false">%1$s-%2$s</string>
+    <string name="from_to" translatable="false">%1$s -\n%2$s</string>
 </resources>
