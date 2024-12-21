@@ -3,6 +3,7 @@ package com.example.diary.presentation
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -16,11 +17,9 @@ import javax.inject.Inject
 
 
 class AddTaskActivity : AppCompatActivity() {
-
     private val component by lazy {
         (application as DiaryApp).component
     }
-
     private lateinit var binding: ActivityAddTaskBinding
     private var taskList: List<Task> = mutableListOf()
 
@@ -36,11 +35,45 @@ class AddTaskActivity : AppCompatActivity() {
         binding = ActivityAddTaskBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        getNameEditTextFocusAndShowKeyboard()
+        setupNumberPickers()
+
         addTaskViewModel.taskListLD.observe(this) {
             taskList = it
         }
-        val date = intent.getLongExtra(KEY_ADD_TASK_ACTIVITY, 0)
 
+        binding.saveButton.setOnClickListener {
+            val date = intent.getLongExtra(KEY_ADD_TASK_ACTIVITY, 0)
+            if (binding.nameEditText.text.toString().trim().isEmpty()) {
+                Toast.makeText(this, getString(R.string.fill_in_the_name_field), Toast.LENGTH_SHORT)
+                    .show()
+            } else {
+                val dateStart =
+                    Instant.ofEpochSecond(date + binding.numberPickerStart.value * 3600.toLong())
+                        .atZone(ZoneId.systemDefault())
+                val dateEnd =
+                    Instant.ofEpochSecond(date + (binding.numberPickerEnd.value + 1) * 3600.toLong())
+                        .atZone(ZoneId.systemDefault())
+                val task = Task(
+                    taskList.size,
+                    dateStart,
+                    dateEnd,
+                    binding.nameEditText.text.toString().trim(),
+                    binding.descriptionEditText.text.toString().trim()
+                )
+                addTaskViewModel.addTask(task)
+                finish()
+            }
+        }
+    }
+
+    private fun getNameEditTextFocusAndShowKeyboard() {
+        binding.nameEditText.requestFocus()
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(binding.nameEditText, InputMethodManager.SHOW_IMPLICIT)
+    }
+
+    private fun setupNumberPickers() {
         val itemsTimeStart = Array(24) { "0" }
         for (i in 0..23) {
             val hour = i.toString().padStart(2, '0')
@@ -84,33 +117,6 @@ class AddTaskActivity : AppCompatActivity() {
                 if (newValue <= binding.numberPickerStart.value) {
                     binding.numberPickerStart.value = newValue
                 }
-            }
-        }
-
-        binding.saveButton.setOnClickListener {
-            if (binding.nameEditText.text.toString().trim().isEmpty()) {
-                Toast.makeText(this, getString(R.string.fill_in_the_name_field), Toast.LENGTH_SHORT)
-                    .show()
-            } else {
-                val dateStart =
-                    Instant.ofEpochSecond(date + binding.numberPickerStart.value * 3600.toLong())
-                        .atZone(ZoneId.systemDefault())
-                val dateEnd =
-                    Instant.ofEpochSecond(date + (binding.numberPickerEnd.value + 1) * 3600.toLong())
-                        .atZone(ZoneId.systemDefault())
-                var id = 0
-                if (taskList.isNotEmpty()) {
-                    id = taskList.size
-                }
-                val task = Task(
-                    id,
-                    dateStart,
-                    dateEnd,
-                    binding.nameEditText.text.toString().trim(),
-                    binding.descriptionEditText.text.toString().trim()
-                )
-                addTaskViewModel.addTask(task)
-                finish()
             }
         }
     }

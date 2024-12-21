@@ -29,6 +29,7 @@
         <activity
             android:name=".presentation.AddTaskActivity"
             android:exported="false"
+            android:windowSoftInputMode="stateVisible|adjustResize"
             android:screenOrientation="portrait" />
         <activity
             android:name=".presentation.TaskListActivity"
