@@ -7,7 +7,6 @@ plugins {
 android {
     namespace = "com.example.diary"
     compileSdk = 35
-
     defaultConfig {
         applicationId = "com.example.diary"
         minSdk = 26
@@ -17,7 +16,6 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -37,21 +35,40 @@ android {
     buildFeatures {
         viewBinding = true
     }
+
+    android.testOptions {
+        unitTests.isReturnDefaultValues = true
+    }
 }
 
 dependencies {
-    implementation ("com.applandeo:material-calendar-view:1.9.2")
-    implementation ("com.google.code.gson:gson:2.11.0")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
+    //Calender
+    implementation(libs.material.calendar.view)
 
-    implementation ("com.google.dagger:dagger:2.51.1")
+    //Gson
+    implementation(libs.gson)
+
+    //ViewModel Lifecycle
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+
+    //Dagger
+    implementation(libs.dagger)
+    ksp(libs.google.dagger.compiler)
+
+    //Room
+    implementation(libs.androidx.room.runtime)
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
+
+    //Mockito
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.kotlin)
+
     implementation(libs.androidx.databinding.runtime)
-    ksp ("com.google.dagger:dagger-compiler:2.51.1")
-
-    implementation("androidx.room:room-runtime:2.6.1")
-    ksp ("androidx.room:room-compiler:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
-
+    testImplementation(libs.junit.junit)
+    testImplementation(libs.junit.junit)
+    testImplementation(libs.junit.junit)
+    testImplementation(libs.junit.junit)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

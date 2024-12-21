@@ -58,7 +58,6 @@ class TaskListActivity : AppCompatActivity() {
             }
         })
 
-
         binding.addButton.setOnClickListener {
             val time = calendarView.selectedDates[0].timeInMillis / 1000
             startActivity(AddTaskActivity.getAddTaskScreenIntent(this, time))

@@ -20,9 +20,7 @@ class JsonDB @Inject constructor(
 ) {
 
     init {
-        CoroutineScope(Dispatchers.IO).launch {
-            loadTasksFromFile()
-        }
+        CoroutineScope(Dispatchers.IO).launch { loadTasksFromFile() }
     }
 
     private val taskListDTO = mutableListOf<TaskJsonDTO>()
@@ -36,19 +34,19 @@ class JsonDB @Inject constructor(
         _taskListDtoLD.postValue(taskListDTO)
     }
 
-    suspend fun saveTasksToFile() {
+    private suspend fun saveTasksToFile() {
         val json = Gson().toJson(taskListDTO)
         withContext(Dispatchers.IO) {
-            application.openFileOutput(fileName, Context.MODE_PRIVATE).use {
+            application.openFileOutput(FILE_NAME, Context.MODE_PRIVATE).use {
                 it.write(json.toByteArray())
             }
         }
     }
 
     private suspend fun loadTasksFromFile() {
-        val file = File(application.filesDir, fileName)
+        val file = File(application.filesDir, FILE_NAME)
         val gson = Gson()
-        val type = object : TypeToken<List<TaskJsonDTO>>(){}.type
+        val type = object : TypeToken<List<TaskJsonDTO>>() {}.type
 
         withContext(Dispatchers.IO) {
             if (file.exists()) {
@@ -73,7 +71,7 @@ class JsonDB @Inject constructor(
 
     companion object {
         private const val TASK_GENERATOR_KEY = "task_generator"
-        private const val fileName = "Task_data.json"
+        private const val FILE_NAME = "Task_data.json"
         private var INSTANCE: JsonDB? = null
         private val LOCK = Any()
 

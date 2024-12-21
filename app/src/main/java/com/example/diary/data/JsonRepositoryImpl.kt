@@ -20,7 +20,6 @@ class JsonRepositoryImpl @Inject constructor(
     }
 
     override fun getTaskList(): LiveData<List<Task>> {
-
         return jsonDB.taskListDtoLD.map { TaskListMapper.mapTaskListDTOtoEntityList(it) }
     }
 
@@ -29,9 +28,5 @@ class JsonRepositoryImpl @Inject constructor(
             "There is no task with id: $id"
         )
         return TaskListMapper.mapTaskDTOtoEntity(taskList[0])
-    }
-
-    companion object {
-        private const val fileName = "Data.json"
     }
 }

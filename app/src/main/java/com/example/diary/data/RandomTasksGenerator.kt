@@ -62,8 +62,8 @@ object RandomTasksGenerator {
     private fun getRandomDays(): LinkedList<Int> {
         val randomDaysList: MutableList<Int> = mutableListOf()
         val randomDaysLinkedList = LinkedList<Int>()
-        for (i in -20..20){
-            randomDaysList.add(i)
+        (-20..20).forEach{
+            randomDaysList.add(it)
         }
         randomDaysList.shuffled().forEach {
             randomDaysLinkedList.add(it)

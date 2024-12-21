@@ -24,8 +24,8 @@ class TaskViewManager(
     var taskList: List<Task> = listOf()
 
     private var hoursTV: List<View>
-    private val viewColumns: MutableList<MutableList<View>> = mutableListOf()
-    private val taskColumns: MutableList<MutableList<Task>> = mutableListOf()
+    val viewColumns: MutableList<MutableList<View>> = mutableListOf()
+    val taskColumns: MutableList<MutableList<Task>> = mutableListOf()
     private val sleepingCatIV = constraintLayout.getViewById(R.id.sleepingCatIV)
     private val sleepingCatTV = constraintLayout.getViewById(R.id.noTasksTV)
 
@@ -165,7 +165,7 @@ class TaskViewManager(
         }
     }
 
-    private fun findFreeColumn(task: Task): Int {
+    fun findFreeColumn(task: Task): Int {
         if (viewColumns.isEmpty()) {
             taskColumns.add(mutableListOf())
             viewColumns.add(mutableListOf())
