@@ -20,11 +20,10 @@
     <TextView
         android:id="@+id/taskTV"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_margin="3dp"
-        android:ellipsize="end"
+        android:hyphenationFrequency="normal"
         android:textAlignment="viewStart"
         android:textColor="@color/black"
-        android:textStyle="bold"
         tools:text="Do something" />
 </LinearLayout>
