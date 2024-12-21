@@ -102,7 +102,7 @@ class TaskViewManager(
             activity.startActivity(TaskDetailsActivity.getTaskDetailsIntent(activity, task.id))
         }
 
-        if (numberOfColumn == -1 || numberOfColumn == 0) {
+        if (numberOfColumn < 1) {
             val params = LayoutParams(
                 LayoutParams.WRAP_CONTENT,
                 LayoutParams.WRAP_CONTENT

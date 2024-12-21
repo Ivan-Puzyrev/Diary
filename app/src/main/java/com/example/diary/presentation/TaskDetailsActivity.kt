@@ -33,20 +33,19 @@ class TaskDetailsActivity : AppCompatActivity() {
         val taskId = intent.getIntExtra(KEY_TASK_ID, UNKNOWN_ID)
         taskDetailsViewModel.getTaskById(taskId)
 
-        taskDetailsViewModel.task.observe(this, {
-            binding.title.setText(it.name)
+        taskDetailsViewModel.task.observe(this) {
+            binding.title.text = it.name
             val startHour = "${it.dateStart.hour.toString().padStart(2, '0')}:00"
             val finishHour = "${it.dateFinish.hour.toString().padStart(2, '0')}:00"
-            binding.time.setText(getString(R.string.time, startHour, finishHour))
-            binding.date.setText(
-                getString(
-                    R.string.date,
-                    it.dateStart.dayOfMonth.toString().padStart(2, '0'),
-                    it.dateStart.month.value.toString().padStart(2, '0'),
-                    it.dateStart.year.toString()
-                ))
-            binding.description.setText(it.description)
-        })
+            binding.time.text = getString(R.string.time, startHour, finishHour)
+            binding.date.text = getString(
+                R.string.date,
+                it.dateStart.dayOfMonth.toString().padStart(2, '0'),
+                it.dateStart.month.value.toString().padStart(2, '0'),
+                it.dateStart.year.toString()
+            )
+            binding.description.text = it.description
+        }
 
     }
 
