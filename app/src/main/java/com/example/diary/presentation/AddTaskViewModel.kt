@@ -15,7 +15,6 @@ class AddTaskViewModel @Inject constructor (
 
     val taskListLD = getTaskListUseCase.invoke()
 
-
     fun addTask(task: Task) {
         viewModelScope.launch {
             addTaskUseCase.addTask(task)

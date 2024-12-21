@@ -12,8 +12,7 @@ import javax.inject.Inject
 
 class TaskDetailsActivity : AppCompatActivity() {
 
-    lateinit var binding: ActivityTaskDetailsBinding
-
+    private lateinit var binding: ActivityTaskDetailsBinding
     private val component by lazy {
         (application as DiaryApp).component
     }
@@ -21,7 +20,7 @@ class TaskDetailsActivity : AppCompatActivity() {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
     private val taskDetailsViewModel by lazy {
-        ViewModelProvider(this, viewModelFactory).get(TaskDetailsViewModel::class)
+        ViewModelProvider(this, viewModelFactory)[TaskDetailsViewModel::class]
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,7 +45,6 @@ class TaskDetailsActivity : AppCompatActivity() {
             )
             binding.description.text = it.description
         }
-
     }
 
     companion object {

@@ -1,10 +1,11 @@
-package com.example.diary.data
+package com.example.diary.data.json
 
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.diary.data.RandomTasksGenerator
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope

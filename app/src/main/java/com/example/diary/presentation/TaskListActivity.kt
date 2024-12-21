@@ -100,7 +100,7 @@ class TaskListActivity : AppCompatActivity() {
                 updateStateOfScreen(calendarView, taskViewManager)
                 shortVibration()
             } else {
-                Toast.makeText(this, "No more tasks available", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.no_more_tasks_available), Toast.LENGTH_SHORT).show()
             }
         }
     }

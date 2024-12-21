@@ -46,17 +46,10 @@ class TaskListViewModel @Inject constructor(
                 calendar.time.date
             )
         }
-        val nextHighlightedDays = highlightedDays.filter { it.calendar > selectedDate }
-        return if (nextHighlightedDays.isNotEmpty()) {
-            nextHighlightedDays[0]
-        } else null
+        return highlightedDays.find { it.calendar > selectedDate }
     }
 
     fun getPreviousHighlightedDay(calendar: Calendar): CalendarDay? {
-        val previousHighlightedDays = highlightedDays.filter { it.calendar < calendar }.toList()
-        return if (previousHighlightedDays.isNotEmpty()) {
-            previousHighlightedDays[previousHighlightedDays.lastIndex]
-        } else null
+        return highlightedDays.sortedByDescending { it.calendar }.find { it.calendar < calendar }
     }
-
 }

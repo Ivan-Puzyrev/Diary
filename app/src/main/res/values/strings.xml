@@ -44,7 +44,7 @@
     </string>
     <string name="choose_storage_type">Choose storage type</string>
     <string name="generate_random_tasks">Generate random tasks</string>
-    <string name="continue_button">Continue</string>
+    <string name="continue_button">CONTINUE</string>
     <string name="json_file">Json file</string>
     <string name="room_database">Room database</string>
     <string name="no_tasks_for_this_day">No tasks for this day</string>
@@ -61,4 +61,5 @@
     <string name="dd_mm_yyyy" translatable="false">%1$s.%2$s.%3$s</string>
     <string name="from_to_1_hour" translatable="false">%1$s-%2$s</string>
     <string name="from_to" translatable="false">%1$s -\n%2$s</string>
+    <string name="no_more_tasks_available">No more tasks available</string>
 </resources>

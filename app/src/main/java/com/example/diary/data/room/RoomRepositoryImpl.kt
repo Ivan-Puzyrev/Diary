@@ -1,7 +1,8 @@
-package com.example.diary.data
+package com.example.diary.data.room
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
+import com.example.diary.data.TaskListMapper
 import com.example.diary.domain.Task
 import com.example.diary.domain.TaskListRepository
 import javax.inject.Inject

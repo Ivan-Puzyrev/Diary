@@ -1,4 +1,4 @@
-package com.example.diary.data
+package com.example.diary.data.json
 
 import com.google.gson.annotations.SerializedName
 

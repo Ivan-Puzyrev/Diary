@@ -2,10 +2,10 @@ package com.example.diary.di
 
 import android.app.Application
 import android.content.SharedPreferences
-import com.example.diary.data.AppRoomDatabase
-import com.example.diary.data.JsonRepositoryImpl
-import com.example.diary.data.RoomRepositoryImpl
-import com.example.diary.data.TaskListDAO
+import com.example.diary.data.room.AppRoomDatabase
+import com.example.diary.data.json.JsonRepositoryImpl
+import com.example.diary.data.room.RoomRepositoryImpl
+import com.example.diary.data.room.TaskListDAO
 import com.example.diary.domain.TaskListRepository
 import dagger.Binds
 import dagger.Module
@@ -19,6 +19,9 @@ interface DataModule {
     fun bindRoomRepository(impl: RoomRepositoryImpl): TaskListRepository
 
     companion object {
+        private const val REPOSITORY_TYPE_KEY = "repository_type"
+        private const val JSON_KEY = "Json"
+
         @JsonQualifier
         @Provides
         fun provideJsonRepository(
@@ -42,7 +45,7 @@ interface DataModule {
             @JsonQualifier jsonRepository: TaskListRepository,
             @RoomQualifier roomRepository: TaskListRepository
         ): TaskListRepository {
-            val repositoryType = sharedPreferences.getString("repository_type", "Json")
+            val repositoryType = sharedPreferences.getString(REPOSITORY_TYPE_KEY, JSON_KEY)
 
             return when (repositoryType) {
                 "Json" -> jsonRepository

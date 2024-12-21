@@ -14,8 +14,8 @@ import com.example.diary.di.DaggerApplicationComponent
 
 class ChooseStorageActivity : AppCompatActivity() {
 
-    lateinit var binding: ActivityChooseStorageBinding
-    lateinit var sharedPreferences: SharedPreferences
+    private lateinit var binding: ActivityChooseStorageBinding
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
