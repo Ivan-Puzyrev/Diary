@@ -12,19 +12,27 @@ object RandomTasksGenerator {
     private const val MINUTE_IN_SECONDS = 60
     private const val HOUR_IN_SECONDS = MINUTE_IN_SECONDS * 60
     private const val DAY_IN_SECONDS = HOUR_IN_SECONDS * 24
+    private const val NUMBER_OF_UNIQUE_DAYS = 8
+    private const val NUMBER_OF_TASKS_IN_UNIQUE_DAY = 5
 
     fun generateTasksJsonDTO(): List<TaskJsonDTO> {
         val tasksJsonDTOlist = mutableListOf<TaskJsonDTO>()
         val randomDays = getRandomDays()
         var id = 0
-        for (i in 0..7) {
+        if (NUMBER_OF_UNIQUE_DAYS > randomDays.size){
+            throw RuntimeException("Add more days to the generator")
+        }
+        for (i in 1..NUMBER_OF_UNIQUE_DAYS) {
             val today =
                 Instant.ofEpochMilli(System.currentTimeMillis()).atZone(ZoneId.systemDefault())
             val startOfTheDay =
                 today.toEpochSecond() - today.hour * HOUR_IN_SECONDS - (today.minute - 1) * MINUTE_IN_SECONDS
             val randomDayInSeconds = randomDays.poll() * DAY_IN_SECONDS
             val randomTasks = getRandomTasks()
-            for (j in 0..4) {
+            if (NUMBER_OF_TASKS_IN_UNIQUE_DAY > randomTasks.size){
+                throw RuntimeException("Add more tasks to the generator")
+            }
+            for (j in 1..NUMBER_OF_TASKS_IN_UNIQUE_DAY) {
                 val randomStartHour = (Random.nextInt(8) + 8) * HOUR_IN_SECONDS
                 val start = startOfTheDay + randomDayInSeconds + randomStartHour
                 val finish = start + (Random.nextInt(4) + 3) * HOUR_IN_SECONDS
@@ -41,14 +49,20 @@ object RandomTasksGenerator {
         val randomDays = getRandomDays()
         val tasksRoomDTOlist = mutableListOf<TaskRoomDTO>()
         var id = 0
-        for (i in 0..7) {
+        if (NUMBER_OF_UNIQUE_DAYS > randomDays.size){
+            throw RuntimeException("Add more days to the generator")
+        }
+        for (i in 1..NUMBER_OF_UNIQUE_DAYS) {
             val today =
                 Instant.ofEpochMilli(System.currentTimeMillis()).atZone(ZoneId.systemDefault())
             val startOfTheDay =
                 today.toEpochSecond() - today.hour * HOUR_IN_SECONDS - (today.minute - 1) * MINUTE_IN_SECONDS
             val randomDayInSeconds = randomDays.poll() * DAY_IN_SECONDS
             val randomTasks = getRandomTasks()
-            for (j in 0..4) {
+            if (NUMBER_OF_TASKS_IN_UNIQUE_DAY > randomTasks.size){
+                throw RuntimeException("Add more tasks to the generator")
+            }
+            for (j in 1..NUMBER_OF_TASKS_IN_UNIQUE_DAY) {
                 val randomStartHour = (Random.nextInt(8) + 8) * HOUR_IN_SECONDS
                 val start = startOfTheDay + randomDayInSeconds + randomStartHour
                 val finish = start + (Random.nextInt(4) + 3) * HOUR_IN_SECONDS
