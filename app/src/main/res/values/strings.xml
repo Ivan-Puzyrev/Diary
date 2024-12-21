@@ -59,5 +59,6 @@
     <string name="time">%1$s - %2$s</string>
     <string name="date">%1$s %2$s, %3$s</string>
     <string name="dd_mm_yyyy">%1$s.%2$s.%3$s</string>
-    <string name="from_to">%1$s-%2$s</string>
+    <string name="from_to_1_hour">%1$s-%2$s</string>
+    <string name="from_to">%1$s -\n%2$s</string>
 </resources>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/aqua_marine"
     android:orientation="vertical"
     android:padding="3dp">
@@ -11,18 +11,20 @@
         android:id="@+id/timeTV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:ellipsize="end"
         android:textAlignment="center"
         android:textColor="@color/white"
         android:textStyle="bold"
-        tools:text="10:00-14:00"/>
+        tools:text="10:00-14:00" />
 
     <TextView
         android:id="@+id/taskTV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="3dp"
+        android:ellipsize="end"
         android:textAlignment="viewStart"
         android:textColor="@color/black"
-        android:layout_margin="3dp"
         android:textStyle="bold"
-        tools:text="Do something"/>
+        tools:text="Do something" />
 </LinearLayout>

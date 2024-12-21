@@ -80,11 +80,21 @@ class TaskViewManager(
 
         val startHour = "${task.dateStart.hour.toString().padStart(2, '0')}:00"
         val finishHour = "${task.dateFinish.hour.toString().padStart(2, '0')}:00"
-        textViewBinding.timeTV.text = context.getString(
-            R.string.from_to,
-            startHour,
-            finishHour
-        )
+        if (task.dateFinish.hour - task.dateStart.hour < 2) {
+            textViewBinding.timeTV.maxLines = 1
+            textViewBinding.timeTV.text = context.getString(
+                R.string.from_to_1_hour,
+                startHour,
+                finishHour
+            )
+        } else {
+            textViewBinding.timeTV.text = context.getString(
+                R.string.from_to,
+                startHour,
+                finishHour
+            )
+        }
+
         textViewBinding.taskTV.setText(task.name)
 
         textView.setOnClickListener {
@@ -160,7 +170,7 @@ class TaskViewManager(
             viewColumns.add(mutableListOf())
             return -1
         } else {
-            for (i in 0..< taskColumns.size) {
+            for (i in 0..<taskColumns.size) {
                 val column = taskColumns[i]
                 for (j in 0..<column.size) {
                     val columnTask = column[j]
@@ -224,7 +234,7 @@ class TaskViewManager(
             taskList.maxBy { it.dateFinish.hour }.dateFinish.hour
         }
 
-        for (i in minStartHour..< maxFinishHour) {
+        for (i in minStartHour..<maxFinishHour) {
             hoursTV[i].visibility = View.VISIBLE
         }
     }
