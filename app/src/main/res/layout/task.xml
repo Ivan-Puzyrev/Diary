@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/aqua_marine"
     android:orientation="vertical"
     android:padding="3dp">
@@ -12,7 +13,8 @@
         android:layout_height="wrap_content"
         android:textAlignment="center"
         android:textColor="@color/white"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        tools:text="10:00-14:00"/>
 
     <TextView
         android:id="@+id/taskTV"
@@ -20,5 +22,7 @@
         android:layout_height="wrap_content"
         android:textAlignment="viewStart"
         android:textColor="@color/black"
-        android:textStyle="bold" />
+        android:layout_margin="3dp"
+        android:textStyle="bold"
+        tools:text="Do something"/>
 </LinearLayout>

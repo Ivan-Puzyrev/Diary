@@ -1,6 +1,9 @@
 package com.example.diary.presentation
 
+import android.content.Context
 import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -44,7 +47,7 @@ class TaskListActivity : AppCompatActivity() {
 
         viewModel.taskListLD.observe(this) {
             taskViewManager.taskList = it
-            calendarView.setCalendarDays(viewModel.getHighlightedDays())
+            calendarView.setCalendarDays(viewModel.highlightedDays)
             updateStateOfScreen(calendarView, taskViewManager)
         }
 
@@ -72,6 +75,7 @@ class TaskListActivity : AppCompatActivity() {
             tapTheCatCounter++
             if (tapTheCatCounter == 5) {
                 Toast.makeText(this, getString(R.string.meow), Toast.LENGTH_SHORT).show()
+                shortVibration()
                 tapTheCatCounter = 0
             }
         }
@@ -84,6 +88,7 @@ class TaskListActivity : AppCompatActivity() {
             if (nextDay != null) {
                 binding.calendar.setDate(nextDay.calendar)
                 updateStateOfScreen(calendarView, taskViewManager)
+                shortVibration()
             } else {
                 Toast.makeText(this, "No more tasks available", Toast.LENGTH_SHORT).show()
             }
@@ -94,6 +99,7 @@ class TaskListActivity : AppCompatActivity() {
             if (previousDay != null) {
                 binding.calendar.setDate(previousDay.calendar)
                 updateStateOfScreen(calendarView, taskViewManager)
+                shortVibration()
             } else {
                 Toast.makeText(this, "No more tasks available", Toast.LENGTH_SHORT).show()
             }
@@ -119,28 +125,30 @@ class TaskListActivity : AppCompatActivity() {
     private fun updateCurrentDate(calendarView: CalendarView) {
         val selectedDay =
             calendarView.firstSelectedDate.time.toInstant().atZone(ZoneId.systemDefault())
-        binding.dateTV.setText(
-            getString(
-                R.string.dd_mm_yyyy,
-                selectedDay.dayOfMonth.toString().padStart(2, '0'),
-                selectedDay.monthValue.toString().padStart(2, '0'),
-                selectedDay.year.toString()
-            )
+        binding.dateTV.text = getString(
+            R.string.dd_mm_yyyy,
+            selectedDay.dayOfMonth.toString().padStart(2, '0'),
+            selectedDay.monthValue.toString().padStart(2, '0'),
+            selectedDay.year.toString()
         )
     }
 
     private fun updateStateOfArrows(calendarView: CalendarView) {
-        val highlightedDays = viewModel.taskListLD.value?.let { viewModel.getHighlightedDays() }
-        if (highlightedDays?.let { viewModel.getNextHighlightedDay(calendarView.firstSelectedDate) } == null) {
+        if (viewModel.getNextHighlightedDay(calendarView.firstSelectedDate) == null) {
             binding.rightButton.alpha = 0.5f
         } else {
             binding.rightButton.alpha = 1.0f
         }
-        if (highlightedDays?.let { viewModel.getPreviousHighlightedDay(calendarView.firstSelectedDate) } == null) {
+        if (viewModel.getPreviousHighlightedDay(calendarView.firstSelectedDate) == null) {
             binding.leftButton.alpha = 0.5f
         } else {
             binding.leftButton.alpha = 1.0f
         }
+    }
+
+    private fun shortVibration(){
+        val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        vibrator.vibrate(VibrationEffect.createOneShot(70, VibrationEffect.DEFAULT_AMPLITUDE))
     }
 
 

@@ -17,26 +17,25 @@ class TaskListViewModel @Inject constructor(
 ) : ViewModel() {
 
     val taskListLD = getTaskListUseCase.invoke()
-
+    val highlightedDays: List<CalendarDay>
+        get() {
+            val highlightedDays = mutableSetOf<CalendarDay>()
+            taskListLD.value?.forEach {
+                val day = Calendar.getInstance()
+                day.set(it.dateStart.year, it.dateStart.month.value - 1, it.dateStart.dayOfMonth)
+                day.set(Calendar.MILLISECOND, 0)
+                val calendarDay = CalendarDay(day)
+                calendarDay.labelColor = R.color.white
+                calendarDay.backgroundResource = R.drawable.calender_highlight
+                highlightedDays.add(calendarDay)
+            }
+            return highlightedDays.sortedBy { it.calendar.time }.toList()
+        }
 
     fun addTask(task: Task) {
         viewModelScope.launch {
             addTaskUseCase.addTask(task)
         }
-    }
-
-    fun getHighlightedDays(): List<CalendarDay> {
-        val highlightedDays = mutableSetOf<CalendarDay>()
-        taskListLD.value?.forEach {
-            val day = Calendar.getInstance()
-            day.set(it.dateStart.year, it.dateStart.month.value - 1, it.dateStart.dayOfMonth)
-            day.set(Calendar.MILLISECOND, 0)
-            val calendarDay = CalendarDay(day)
-            calendarDay.labelColor = R.color.white
-            calendarDay.backgroundResource = R.drawable.calender_highlight
-            highlightedDays.add(calendarDay)
-        }
-        return highlightedDays.sortedBy { it.calendar.time }.toList()
     }
 
     fun getNextHighlightedDay(calendar: Calendar): CalendarDay? {
@@ -47,14 +46,14 @@ class TaskListViewModel @Inject constructor(
                 calendar.time.date
             )
         }
-        val nextHighlightedDays = getHighlightedDays().filter { it.calendar > selectedDate }
+        val nextHighlightedDays = highlightedDays.filter { it.calendar > selectedDate }
         return if (nextHighlightedDays.isNotEmpty()) {
             nextHighlightedDays[0]
         } else null
     }
 
     fun getPreviousHighlightedDay(calendar: Calendar): CalendarDay? {
-        val previousHighlightedDays = getHighlightedDays().filter { it.calendar < calendar }.toList()
+        val previousHighlightedDays = highlightedDays.filter { it.calendar < calendar }.toList()
         return if (previousHighlightedDays.isNotEmpty()) {
             previousHighlightedDays[previousHighlightedDays.lastIndex]
         } else null
