@@ -11,19 +11,23 @@ import androidx.appcompat.app.AppCompatDelegate
 import com.example.diary.DiaryApp
 import com.example.diary.databinding.ActivityChooseStorageBinding
 import com.example.diary.di.DaggerApplicationComponent
+import javax.inject.Inject
 
 class ChooseStorageActivity : AppCompatActivity() {
 
+    private val component by lazy {
+        (application as DiaryApp).component
+    }
     private lateinit var binding: ActivityChooseStorageBinding
-    private lateinit var sharedPreferences: SharedPreferences
+    @Inject
+    lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        component.inject(this)
         super.onCreate(savedInstanceState)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         binding = ActivityChooseStorageBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        sharedPreferences = getSharedPreferences(APP_SETTINGS, MODE_PRIVATE)
 
         if (!sharedPreferences.getString(REPOSITORY_TYPE_KEY, "").equals("")) {
             val intent = Intent(this, TaskListActivity::class.java)
@@ -63,8 +67,6 @@ class ChooseStorageActivity : AppCompatActivity() {
             binding.continueButton.visibility = View.VISIBLE
         }
 
-
-
         binding.continueButton.setOnClickListener {
             binding.progressBar.visibility = View.VISIBLE
             chooseRepository(repository)
@@ -87,7 +89,6 @@ class ChooseStorageActivity : AppCompatActivity() {
     }
 
     companion object {
-        private const val APP_SETTINGS = "settings"
         private const val REPOSITORY_TYPE_KEY = "repository_type"
         private const val TASK_GENERATOR_KEY = "task_generator"
         private const val JSON_REPOSITORY_TYPE = "Json"
