@@ -13,6 +13,7 @@
 ✅ Поддержка версий: Android 8+  
 ✅ Ориентация: портретная  
 ✅ Код на GitHub  
+  
 **2 уровень:**  
 ✅ Добавить экран создания дела, на котором присутствует возможность указать название, выбрать дату и время, краткое описание дела текстом  
 ❌ Создание компонентов экрана кодом с помощью кастомных вью на Kotlin или верстка с помощью Jetpack Compose  
@@ -21,4 +22,4 @@
 # Экраны приложения
 ![Экраны приложения](https://i.postimg.cc/MHcz3QTy/Diary.png)  
 # Краткий видеообзор приложения  
-[![Название ролика](https://img.youtube.com/vi/hKzyu0ppAPE/0.jpg)](https://www.youtube.com/watch?v=hKzyu0ppAPE)
+[![Название ролика](https://img.youtube.com/vi/hKzyu0ppAPE/0.jpg)](https://youtube.com/shorts/hKzyu0ppAPE)
