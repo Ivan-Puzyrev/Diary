@@ -7,7 +7,6 @@ import android.os.Vibrator
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModelProvider
 import com.applandeo.materialcalendarview.CalendarDay
 import com.applandeo.materialcalendarview.CalendarView
@@ -32,7 +31,6 @@ class TaskListActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         component.inject(this)
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         super.onCreate(savedInstanceState)
         binding = ActivityTaskListBinding.inflate(layoutInflater)
         setContentView(binding.root)
