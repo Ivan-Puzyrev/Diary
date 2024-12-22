@@ -19,4 +19,6 @@
 ✅ Для локального хранения используем Room  
 ✅ Покрытие Unit-тестами: 1-2 тест  
 # Экраны приложения
-![Экраны приложения](https://i.postimg.cc/MHcz3QTy/Diary.png)
+![Экраны приложения](https://i.postimg.cc/MHcz3QTy/Diary.png)  
+# Краткий видеообзор приложения  
+[![Название ролика](https://img.youtube.com/vi/hKzyu0ppAPE/0.jpg)](https://www.youtube.com/watch?v=hKzyu0ppAPE)
