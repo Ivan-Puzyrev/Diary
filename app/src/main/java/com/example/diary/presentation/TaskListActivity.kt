@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.applandeo.materialcalendarview.CalendarDay
 import com.applandeo.materialcalendarview.CalendarView
 import com.applandeo.materialcalendarview.CalendarWeekDay
@@ -15,6 +16,8 @@ import com.applandeo.materialcalendarview.listeners.OnCalendarDayClickListener
 import com.example.diary.DiaryApp
 import com.example.diary.R
 import com.example.diary.databinding.ActivityTaskListBinding
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.time.ZoneId
 import javax.inject.Inject
 
@@ -28,6 +31,7 @@ class TaskListActivity : AppCompatActivity() {
     private val viewModel by lazy {
         ViewModelProvider(this, viewModelFactory)[TaskListViewModel::class]
     }
+    private var isToastVisible = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         component.inject(this)
@@ -79,7 +83,10 @@ class TaskListActivity : AppCompatActivity() {
 
     }
 
-    private fun setupNavigationButtons(calendarView: CalendarView, taskViewManager: TaskViewManager) {
+    private fun setupNavigationButtons(
+        calendarView: CalendarView,
+        taskViewManager: TaskViewManager
+    ) {
         binding.rightButton.setOnClickListener {
             val nextDay = viewModel.getNextHighlightedDay(calendarView.firstSelectedDate)
             if (nextDay != null) {
@@ -87,7 +94,14 @@ class TaskListActivity : AppCompatActivity() {
                 updateStateOfScreen(calendarView, taskViewManager)
                 shortVibration()
             } else {
-                Toast.makeText(this, getString(R.string.no_more_tasks_available), Toast.LENGTH_SHORT).show()
+                if (isToastVisible) {
+                    isToastVisible = false
+                    Toast.makeText(this, getString(R.string.no_more_tasks_available), Toast.LENGTH_SHORT).show()
+                    lifecycleScope.launch {
+                        delay(3000)
+                        isToastVisible = true
+                    }
+                }
             }
         }
 
@@ -98,7 +112,14 @@ class TaskListActivity : AppCompatActivity() {
                 updateStateOfScreen(calendarView, taskViewManager)
                 shortVibration()
             } else {
-                Toast.makeText(this, getString(R.string.no_more_tasks_available), Toast.LENGTH_SHORT).show()
+                if (isToastVisible) {
+                    isToastVisible = false
+                    Toast.makeText(this, getString(R.string.no_more_tasks_available), Toast.LENGTH_SHORT).show()
+                    lifecycleScope.launch {
+                        delay(3000)
+                        isToastVisible = true
+                    }
+                }
             }
         }
     }
@@ -143,7 +164,7 @@ class TaskListActivity : AppCompatActivity() {
         }
     }
 
-    private fun shortVibration(){
+    private fun shortVibration() {
         val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         vibrator.vibrate(VibrationEffect.createOneShot(70, VibrationEffect.DEFAULT_AMPLITUDE))
     }
