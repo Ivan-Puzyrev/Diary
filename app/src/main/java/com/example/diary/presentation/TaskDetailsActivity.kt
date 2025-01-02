@@ -31,8 +31,11 @@ class TaskDetailsActivity : AppCompatActivity() {
 
         val taskId = intent.getIntExtra(KEY_TASK_ID, UNKNOWN_ID)
         taskDetailsViewModel.getTaskById(taskId)
+        observeViewModel()
+    }
 
-        taskDetailsViewModel.task.observe(this) {
+    private fun observeViewModel() {
+        taskDetailsViewModel.taskLD.observe(this) {
             binding.title.text = it.name
             val startHour = "${it.dateStart.hour.toString().padStart(2, '0')}:00"
             val finishHour = "${it.dateFinish.hour.toString().padStart(2, '0')}:00"
@@ -51,10 +54,7 @@ class TaskDetailsActivity : AppCompatActivity() {
         private const val KEY_TASK_ID = "task_id"
         private const val UNKNOWN_ID = -1
 
-        fun getTaskDetailsIntent(
-            context: Context,
-            id: Int
-        ): Intent {
+        fun getTaskDetailsIntent(context: Context, id: Int): Intent {
             val launchIntent = Intent(context, TaskDetailsActivity::class.java).apply {
                 putExtra(KEY_TASK_ID, id)
             }

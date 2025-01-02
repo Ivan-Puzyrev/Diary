@@ -20,4 +20,6 @@
     <string name="left_button">Левая кнопка</string>
     <string name="hide_calender">Спрятать календарь</string>
     <string name="sleeping_cat">Спящая кошка</string>
+    <string name="loading">ЗАГРУЗКА</string>
+    <string name="pin_image">Изображение концелярской кнопки</string>
 </resources>

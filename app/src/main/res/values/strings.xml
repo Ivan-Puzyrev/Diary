@@ -91,4 +91,6 @@
     <string name="_01_00" translatable="false">01:00</string>
     <string name="_00_00" translatable="false">00:00</string>
     <string name="sleeping_cat">Sleeping cat</string>
+    <string name="loading" translatable="true" >LOADING</string>
+    <string name="pin_image">Pin image</string>
 </resources>

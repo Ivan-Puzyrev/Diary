@@ -19,6 +19,7 @@ class ChooseStorageActivity : AppCompatActivity() {
         (application as DiaryApp).component
     }
     private lateinit var binding: ActivityChooseStorageBinding
+
     @Inject
     lateinit var sharedPreferences: SharedPreferences
 
@@ -35,12 +36,16 @@ class ChooseStorageActivity : AppCompatActivity() {
             finish()
         }
 
+        setupClickListeners()
+
+    }
+
+    private fun setupClickListeners() {
         val colorMatrix = ColorMatrix()
         colorMatrix.setSaturation(0f)
         val colorFilter = ColorMatrixColorFilter(colorMatrix)
         binding.jsonIV.colorFilter = colorFilter
         binding.roomIV.colorFilter = colorFilter
-
         var repository = ""
 
         binding.jsonIV.setOnClickListener {
@@ -70,12 +75,12 @@ class ChooseStorageActivity : AppCompatActivity() {
         binding.continueButton.setOnClickListener {
             binding.progressBar.visibility = View.VISIBLE
             chooseRepository(repository)
-            sharedPreferences.edit().putBoolean(TASK_GENERATOR_KEY, binding.checkBox.isChecked).apply()
+            sharedPreferences.edit().putBoolean(TASK_GENERATOR_KEY, binding.checkBox.isChecked)
+                .apply()
             val intent = Intent(this, TaskListActivity::class.java)
             startActivity(intent)
             finish()
         }
-
     }
 
     private fun chooseRepository(repository: String) {

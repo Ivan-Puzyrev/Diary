@@ -8,7 +8,6 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.applandeo.materialcalendarview.CalendarDay
 import com.applandeo.materialcalendarview.CalendarView
 import com.applandeo.materialcalendarview.CalendarWeekDay
@@ -16,14 +15,14 @@ import com.applandeo.materialcalendarview.listeners.OnCalendarDayClickListener
 import com.example.diary.DiaryApp
 import com.example.diary.R
 import com.example.diary.databinding.ActivityTaskListBinding
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.time.ZoneId
 import javax.inject.Inject
 
 class TaskListActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityTaskListBinding
+    private lateinit var calendarView: CalendarView
+    private lateinit var taskViewManager: TaskViewManager
     private val component by lazy { (application as DiaryApp).component }
 
     @Inject
@@ -31,7 +30,6 @@ class TaskListActivity : AppCompatActivity() {
     private val viewModel by lazy {
         ViewModelProvider(this, viewModelFactory)[TaskListViewModel::class]
     }
-    private var isToastVisible = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         component.inject(this)
@@ -39,24 +37,58 @@ class TaskListActivity : AppCompatActivity() {
         binding = ActivityTaskListBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val calendarView = binding.calendar.apply {
-            setFirstDayOfWeek(CalendarWeekDay.MONDAY)
-        }
+        calendarView = binding.calendar.apply { setFirstDayOfWeek(CalendarWeekDay.MONDAY) }
+        taskViewManager = TaskViewManager(this, binding.tasksCL)
 
-        val taskViewManager = TaskViewManager(this, binding.tasksCL)
+        observeViewModel()
+        setupClickListeners()
+    }
 
-        setupNavigationButtons(calendarView, taskViewManager)
-
+    private fun observeViewModel() {
         viewModel.taskListLD.observe(this) {
             taskViewManager.taskList = it
-            calendarView.setCalendarDays(viewModel.highlightedDays)
-            updateStateOfScreen(calendarView, taskViewManager)
+            viewModel.highlightDays()
+            updateStateOfScreen()
         }
 
+        viewModel.highlightedDaysLD.observe(this) {
+            calendarView.setCalendarDays(it)
+        }
+
+        viewModel.arrowsStatusLD.observe(this) {
+            if (it.first) { binding.leftButton.alpha = 1.0f } else binding.leftButton.alpha = 0.5f
+            if (it.second) { binding.rightButton.alpha = 1.0f } else binding.rightButton.alpha = 0.5f
+        }
+
+        viewModel.selectedHighlightedDayLD.observe(this) {
+            if (it != null) {
+                calendarView.setDate(it.calendar)
+                updateStateOfScreen()
+                shortVibration()
+            } else {
+                viewModel.showNoMoreTasksToast()
+            }
+        }
+
+        viewModel.noMoreTasksToast.observe(this) {
+            if (it) {
+                Toast.makeText(this, R.string.no_more_tasks_available, Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        viewModel.catToast.observe(this) {
+            if (it) {
+                Toast.makeText(this, R.string.meow, Toast.LENGTH_SHORT).show()
+                shortVibration()
+            }
+        }
+    }
+
+    private fun setupClickListeners() {
         calendarView.setOnCalendarDayClickListener(object : OnCalendarDayClickListener {
             override fun onClick(calendarDay: CalendarDay) {
                 calendarView.setDate(calendarDay.calendar)
-                updateStateOfScreen(calendarDay, calendarView, taskViewManager)
+                updateStateOfScreen()
             }
         })
 
@@ -71,76 +103,20 @@ class TaskListActivity : AppCompatActivity() {
             } else calendarView.visibility = View.GONE
         }
 
-        var tapTheCatCounter = 0
-        binding.sleepingCatIV.setOnClickListener {
-            tapTheCatCounter++
-            if (tapTheCatCounter == 5) {
-                Toast.makeText(this, getString(R.string.meow), Toast.LENGTH_SHORT).show()
-                shortVibration()
-                tapTheCatCounter = 0
-            }
-        }
+        binding.sleepingCatIV.setOnClickListener { viewModel.tapTheCat() }
 
+        binding.rightButton.setOnClickListener { viewModel.moveToNextHighlightedDay(calendarView.firstSelectedDate) }
+
+        binding.leftButton.setOnClickListener { viewModel.moveToPreviousHighlightedDay(calendarView.firstSelectedDate) }
     }
 
-    private fun setupNavigationButtons(
-        calendarView: CalendarView,
-        taskViewManager: TaskViewManager
-    ) {
-        binding.rightButton.setOnClickListener {
-            val nextDay = viewModel.getNextHighlightedDay(calendarView.firstSelectedDate)
-            if (nextDay != null) {
-                binding.calendar.setDate(nextDay.calendar)
-                updateStateOfScreen(calendarView, taskViewManager)
-                shortVibration()
-            } else {
-                if (isToastVisible) {
-                    isToastVisible = false
-                    Toast.makeText(this, getString(R.string.no_more_tasks_available), Toast.LENGTH_SHORT).show()
-                    lifecycleScope.launch {
-                        delay(3000)
-                        isToastVisible = true
-                    }
-                }
-            }
-        }
-
-        binding.leftButton.setOnClickListener {
-            val previousDay = viewModel.getPreviousHighlightedDay(calendarView.firstSelectedDate)
-            if (previousDay != null) {
-                binding.calendar.setDate(previousDay.calendar)
-                updateStateOfScreen(calendarView, taskViewManager)
-                shortVibration()
-            } else {
-                if (isToastVisible) {
-                    isToastVisible = false
-                    Toast.makeText(this, getString(R.string.no_more_tasks_available), Toast.LENGTH_SHORT).show()
-                    lifecycleScope.launch {
-                        delay(3000)
-                        isToastVisible = true
-                    }
-                }
-            }
-        }
-    }
-
-    private fun updateStateOfScreen(
-        calendarDay: CalendarDay,
-        calendarView: CalendarView,
-        taskViewManager: TaskViewManager
-    ) {
-        taskViewManager.showTasksOfTheDay(calendarDay)
-        updateCurrentDate(calendarView)
-        updateStateOfArrows(calendarView)
-    }
-
-    private fun updateStateOfScreen(calendarView: CalendarView, taskViewManager: TaskViewManager) {
+    private fun updateStateOfScreen() {
+        updateCurrentDate()
         taskViewManager.showTasksOfTheDay(CalendarDay(calendarView.firstSelectedDate))
-        updateCurrentDate(calendarView)
-        updateStateOfArrows(calendarView)
+        viewModel.updateStateOfArrows(calendarView)
     }
 
-    private fun updateCurrentDate(calendarView: CalendarView) {
+    private fun updateCurrentDate() {
         val selectedDay =
             calendarView.firstSelectedDate.time.toInstant().atZone(ZoneId.systemDefault())
         binding.dateTV.text = getString(
@@ -151,23 +127,8 @@ class TaskListActivity : AppCompatActivity() {
         )
     }
 
-    private fun updateStateOfArrows(calendarView: CalendarView) {
-        if (viewModel.getNextHighlightedDay(calendarView.firstSelectedDate) == null) {
-            binding.rightButton.alpha = 0.5f
-        } else {
-            binding.rightButton.alpha = 1.0f
-        }
-        if (viewModel.getPreviousHighlightedDay(calendarView.firstSelectedDate) == null) {
-            binding.leftButton.alpha = 0.5f
-        } else {
-            binding.leftButton.alpha = 1.0f
-        }
-    }
-
     private fun shortVibration() {
         val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         vibrator.vibrate(VibrationEffect.createOneShot(70, VibrationEffect.DEFAULT_AMPLITUDE))
     }
-
-
 }

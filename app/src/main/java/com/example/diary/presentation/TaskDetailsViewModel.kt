@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.diary.domain.GetTaskByIdUseCase
 import com.example.diary.domain.Task
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -13,14 +14,14 @@ class TaskDetailsViewModel @Inject constructor(
     private val getTaskByIdUseCase: GetTaskByIdUseCase
 ) : ViewModel() {
 
-    private val _task = MutableLiveData<Task>()
-    val task: LiveData<Task>
-        get() = _task
+    private val _taskLD = MutableLiveData<Task>()
+    val taskLD: LiveData<Task>
+        get() = _taskLD
 
     fun getTaskById(id: Int) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val task = getTaskByIdUseCase.getTaskById(id)
-            _task.value = task
+            _taskLD.postValue(task)
         }
     }
 }

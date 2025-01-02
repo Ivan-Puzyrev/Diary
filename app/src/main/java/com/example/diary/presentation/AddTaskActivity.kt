@@ -37,15 +37,28 @@ class AddTaskActivity : AppCompatActivity() {
 
         getNameEditTextFocusAndShowKeyboard()
         setupNumberPickers()
+        observeViewModel()
+        setupClickListeners()
 
+    }
+
+    private fun observeViewModel() {
         addTaskViewModel.taskListLD.observe(this) {
             taskList = it
         }
+        addTaskViewModel.shouldCloseScreen.observe(this) {
+            if (it) {
+                finish()
+            }
+        }
+    }
 
+    private fun setupClickListeners() {
         binding.saveButton.setOnClickListener {
             val date = intent.getLongExtra(KEY_ADD_TASK_ACTIVITY, 0)
             if (binding.nameEditText.text.toString().trim().isEmpty()) {
-                Toast.makeText(this, getString(R.string.fill_in_the_name_field), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.fill_in_the_name_field), Toast.LENGTH_SHORT)
+                    .show()
             } else {
                 val dateStart =
                     Instant.ofEpochSecond(date + binding.numberPickerStart.value * 3600.toLong())
@@ -61,7 +74,6 @@ class AddTaskActivity : AppCompatActivity() {
                     binding.descriptionEditText.text.toString().trim()
                 )
                 addTaskViewModel.addTask(task)
-                finish()
             }
         }
     }
