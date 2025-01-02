@@ -17,7 +17,7 @@
         <activity
             android:name=".presentation.ChooseStorageActivity"
             android:exported="true"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -25,12 +25,13 @@
         </activity>
         <activity
             android:name=".presentation.TaskDetailsActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".presentation.AddTaskActivity"
             android:exported="false"
-            android:windowSoftInputMode="stateVisible|adjustResize"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateVisible|adjustResize" />
         <activity
             android:name=".presentation.TaskListActivity"
             android:exported="false"

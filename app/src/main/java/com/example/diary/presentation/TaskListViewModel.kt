@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.applandeo.materialcalendarview.CalendarDay
-import com.applandeo.materialcalendarview.CalendarView
 import com.example.diary.R
 import com.example.diary.domain.GetTaskListUseCase
 import kotlinx.coroutines.delay
@@ -39,12 +38,6 @@ class TaskListViewModel @Inject constructor(getTaskListUseCase: GetTaskListUseCa
 
     private var isToastVisible = true
     private var tapTheCatCounter = 0
-
-    fun updateStateOfArrows(calendarView: CalendarView) {
-        val isPreviousDayExist = checkPreviousHighlightedDay(calendarView.firstSelectedDate) != null
-        val isNextDayExist = checkNextHighlightedDay(calendarView.firstSelectedDate) != null
-        _arrowsStatusLD.value = Pair(isPreviousDayExist, isNextDayExist)
-    }
 
     fun highlightDays() {
         val highlightedDays = mutableSetOf<CalendarDay>()
@@ -82,6 +75,12 @@ class TaskListViewModel @Inject constructor(getTaskListUseCase: GetTaskListUseCa
             )
         }
         return _highlightedDaysLD.value?.find { it.calendar > selectedDate }
+    }
+
+    fun updateStateOfArrows(calendar: Calendar) {
+        val isPreviousDayExist = checkPreviousHighlightedDay(calendar) != null
+        val isNextDayExist = checkNextHighlightedDay(calendar) != null
+        _arrowsStatusLD.value = Pair(isPreviousDayExist, isNextDayExist)
     }
 
     fun tapTheCat() {

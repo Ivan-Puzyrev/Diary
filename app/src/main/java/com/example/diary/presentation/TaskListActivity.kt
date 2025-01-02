@@ -113,7 +113,7 @@ class TaskListActivity : AppCompatActivity() {
     private fun updateStateOfScreen() {
         updateCurrentDate()
         taskViewManager.showTasksOfTheDay(CalendarDay(calendarView.firstSelectedDate))
-        viewModel.updateStateOfArrows(calendarView)
+        viewModel.updateStateOfArrows(calendarView.firstSelectedDate)
     }
 
     private fun updateCurrentDate() {
