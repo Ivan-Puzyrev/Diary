@@ -44,42 +44,44 @@ class ChooseStorageActivity : AppCompatActivity() {
         val colorMatrix = ColorMatrix()
         colorMatrix.setSaturation(0f)
         val colorFilter = ColorMatrixColorFilter(colorMatrix)
-        binding.jsonIV.colorFilter = colorFilter
-        binding.roomIV.colorFilter = colorFilter
         var repository = ""
+        with(binding) {
+            jsonIV.colorFilter = colorFilter
+            roomIV.colorFilter = colorFilter
 
-        binding.jsonIV.setOnClickListener {
-            with(binding) {
-                jsonIV.colorFilter = null
-                jsonIV.alpha = 1.0f
-                roomIV.colorFilter = colorFilter
-                roomIV.alpha = 0.3f
+            jsonIV.setOnClickListener {
+                with(binding) {
+                    jsonIV.colorFilter = null
+                    jsonIV.alpha = 1.0f
+                    roomIV.colorFilter = colorFilter
+                    roomIV.alpha = 0.3f
+                }
+                repository = JSON_REPOSITORY_TYPE
+                checkBox.visibility = View.VISIBLE
+                continueButton.visibility = View.VISIBLE
             }
-            repository = JSON_REPOSITORY_TYPE
-            binding.checkBox.visibility = View.VISIBLE
-            binding.continueButton.visibility = View.VISIBLE
-        }
 
-        binding.roomIV.setOnClickListener {
-            with(binding) {
-                roomIV.colorFilter = null
-                roomIV.alpha = 1.0f
-                jsonIV.colorFilter = colorFilter
-                jsonIV.alpha = 0.3f
+            roomIV.setOnClickListener {
+                with(binding) {
+                    roomIV.colorFilter = null
+                    roomIV.alpha = 1.0f
+                    jsonIV.colorFilter = colorFilter
+                    jsonIV.alpha = 0.3f
+                }
+                repository = ROOM_REPOSITORY_TYPE
+                checkBox.visibility = View.VISIBLE
+                continueButton.visibility = View.VISIBLE
             }
-            repository = ROOM_REPOSITORY_TYPE
-            binding.checkBox.visibility = View.VISIBLE
-            binding.continueButton.visibility = View.VISIBLE
-        }
 
-        binding.continueButton.setOnClickListener {
-            binding.progressBar.visibility = View.VISIBLE
-            chooseRepository(repository)
-            sharedPreferences.edit().putBoolean(TASK_GENERATOR_KEY, binding.checkBox.isChecked)
-                .apply()
-            val intent = Intent(this, TaskListActivity::class.java)
-            startActivity(intent)
-            finish()
+            continueButton.setOnClickListener {
+                progressBar.visibility = View.VISIBLE
+                chooseRepository(repository)
+                sharedPreferences.edit().putBoolean(TASK_GENERATOR_KEY, checkBox.isChecked)
+                    .apply()
+                val intent = Intent(this@ChooseStorageActivity, TaskListActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
         }
     }
 

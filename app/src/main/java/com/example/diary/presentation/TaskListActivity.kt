@@ -45,41 +45,52 @@ class TaskListActivity : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
-        viewModel.taskListLD.observe(this) {
-            taskViewManager.taskList = it
-            viewModel.highlightDays()
-            updateStateOfScreen()
-        }
-
-        viewModel.highlightedDaysLD.observe(this) {
-            calendarView.setCalendarDays(it)
-        }
-
-        viewModel.arrowsStatusLD.observe(this) {
-            if (it.first) { binding.leftButton.alpha = 1.0f } else binding.leftButton.alpha = 0.5f
-            if (it.second) { binding.rightButton.alpha = 1.0f } else binding.rightButton.alpha = 0.5f
-        }
-
-        viewModel.selectedHighlightedDayLD.observe(this) {
-            if (it != null) {
-                calendarView.setDate(it.calendar)
+        with(viewModel) {
+            taskListLD.observe(this@TaskListActivity) {
+                taskViewManager.taskList = it
+                viewModel.highlightDays()
                 updateStateOfScreen()
-                shortVibration()
-            } else {
-                viewModel.showNoMoreTasksToast()
             }
-        }
 
-        viewModel.noMoreTasksToast.observe(this) {
-            if (it) {
-                Toast.makeText(this, R.string.no_more_tasks_available, Toast.LENGTH_SHORT).show()
+            highlightedDaysLD.observe(this@TaskListActivity) {
+                calendarView.setCalendarDays(it)
             }
-        }
 
-        viewModel.catToast.observe(this) {
-            if (it) {
-                Toast.makeText(this, R.string.meow, Toast.LENGTH_SHORT).show()
-                shortVibration()
+            arrowsStatusLD.observe(this@TaskListActivity) {
+                if (it.first) {
+                    binding.leftButton.alpha = 1.0f
+                } else binding.leftButton.alpha = 0.5f
+                if (it.second) {
+                    binding.rightButton.alpha = 1.0f
+                } else binding.rightButton.alpha = 0.5f
+            }
+
+            selectedHighlightedDayLD.observe(this@TaskListActivity) {
+                if (it != null) {
+                    calendarView.setDate(it.calendar)
+                    updateStateOfScreen()
+                    shortVibration()
+                } else {
+                    showNoMoreTasksToast()
+                }
+            }
+
+            noMoreTasksToast.observe(this@TaskListActivity) {
+                if (it) {
+                    Toast.makeText(
+                        this@TaskListActivity,
+                        R.string.no_more_tasks_available,
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+                }
+            }
+
+            catToast.observe(this@TaskListActivity) {
+                if (it) {
+                    Toast.makeText(this@TaskListActivity, R.string.meow, Toast.LENGTH_SHORT).show()
+                    shortVibration()
+                }
             }
         }
     }
@@ -92,22 +103,24 @@ class TaskListActivity : AppCompatActivity() {
             }
         })
 
-        binding.addButton.setOnClickListener {
-            val time = calendarView.selectedDates[0].timeInMillis / 1000
-            startActivity(AddTaskActivity.getAddTaskScreenIntent(this, time))
+        with(binding) {
+            addButton.setOnClickListener {
+                val time = calendarView.selectedDates[0].timeInMillis / 1000
+                startActivity(AddTaskActivity.getAddTaskScreenIntent(this@TaskListActivity, time))
+            }
+
+            calenderButton.setOnClickListener {
+                if (calendarView.visibility == View.GONE) {
+                    calendarView.visibility = View.VISIBLE
+                } else calendarView.visibility = View.GONE
+            }
+
+            sleepingCatIV.setOnClickListener { viewModel.tapTheCat() }
+
+            rightButton.setOnClickListener { viewModel.moveToNextHighlightedDay(calendarView.firstSelectedDate) }
+
+            leftButton.setOnClickListener { viewModel.moveToPreviousHighlightedDay(calendarView.firstSelectedDate) }
         }
-
-        binding.calenderButton.setOnClickListener {
-            if (calendarView.visibility == View.GONE) {
-                calendarView.visibility = View.VISIBLE
-            } else calendarView.visibility = View.GONE
-        }
-
-        binding.sleepingCatIV.setOnClickListener { viewModel.tapTheCat() }
-
-        binding.rightButton.setOnClickListener { viewModel.moveToNextHighlightedDay(calendarView.firstSelectedDate) }
-
-        binding.leftButton.setOnClickListener { viewModel.moveToPreviousHighlightedDay(calendarView.firstSelectedDate) }
     }
 
     private fun updateStateOfScreen() {

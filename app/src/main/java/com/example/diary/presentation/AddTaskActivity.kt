@@ -43,37 +43,45 @@ class AddTaskActivity : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
-        addTaskViewModel.taskListLD.observe(this) {
-            taskList = it
-        }
-        addTaskViewModel.shouldCloseScreen.observe(this) {
-            if (it) {
-                finish()
+        with(addTaskViewModel) {
+            taskListLD.observe(this@AddTaskActivity) {
+                taskList = it
+            }
+            shouldCloseScreen.observe(this@AddTaskActivity) {
+                if (it) {
+                    finish()
+                }
             }
         }
     }
 
     private fun setupClickListeners() {
-        binding.saveButton.setOnClickListener {
-            val date = intent.getLongExtra(KEY_ADD_TASK_ACTIVITY, 0)
-            if (binding.nameEditText.text.toString().trim().isEmpty()) {
-                Toast.makeText(this, getString(R.string.fill_in_the_name_field), Toast.LENGTH_SHORT)
-                    .show()
-            } else {
-                val dateStart =
-                    Instant.ofEpochSecond(date + binding.numberPickerStart.value * 3600.toLong())
-                        .atZone(ZoneId.systemDefault())
-                val dateEnd =
-                    Instant.ofEpochSecond(date + (binding.numberPickerEnd.value + 1) * 3600.toLong())
-                        .atZone(ZoneId.systemDefault())
-                val task = Task(
-                    taskList.size,
-                    dateStart,
-                    dateEnd,
-                    binding.nameEditText.text.toString().trim(),
-                    binding.descriptionEditText.text.toString().trim()
-                )
-                addTaskViewModel.addTask(task)
+        with(binding) {
+            saveButton.setOnClickListener {
+                val date = intent.getLongExtra(KEY_ADD_TASK_ACTIVITY, 0)
+                if (nameEditText.text.toString().trim().isEmpty()) {
+                    Toast.makeText(
+                        this@AddTaskActivity,
+                        getString(R.string.fill_in_the_name_field),
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+                } else {
+                    val dateStart =
+                        Instant.ofEpochSecond(date + numberPickerStart.value * 3600.toLong())
+                            .atZone(ZoneId.systemDefault())
+                    val dateEnd =
+                        Instant.ofEpochSecond(date + (numberPickerEnd.value + 1) * 3600.toLong())
+                            .atZone(ZoneId.systemDefault())
+                    val task = Task(
+                        taskList.size,
+                        dateStart,
+                        dateEnd,
+                        nameEditText.text.toString().trim(),
+                        descriptionEditText.text.toString().trim()
+                    )
+                    addTaskViewModel.addTask(task)
+                }
             }
         }
     }
@@ -97,36 +105,38 @@ class AddTaskActivity : AppCompatActivity() {
         }
         itemsTimeEnd[23] = "00:00"
 
-        binding.numberPickerStart.apply {
-            minValue = 0
-            maxValue = itemsTimeStart.size - 1
-            displayedValues = itemsTimeStart
-            value = 12
-        }
+        with(binding) {
+            numberPickerStart.apply {
+                minValue = 0
+                maxValue = itemsTimeStart.size - 1
+                displayedValues = itemsTimeStart
+                value = 12
+            }
 
-        binding.numberPickerEnd.apply {
-            minValue = 0
-            maxValue = itemsTimeEnd.size - 1
-            displayedValues = itemsTimeEnd
-            value = 12
-        }
+            numberPickerEnd.apply {
+                minValue = 0
+                maxValue = itemsTimeEnd.size - 1
+                displayedValues = itemsTimeEnd
+                value = 12
+            }
 
-        binding.numberPickerStart.setOnValueChangedListener { _, _, newValue ->
-            if (newValue == 0 && binding.numberPickerEnd.value == 23) {
-                binding.numberPickerEnd.value = 0
-            } else {
-                if (newValue >= binding.numberPickerEnd.value) {
-                    binding.numberPickerEnd.value = newValue
+            numberPickerStart.setOnValueChangedListener { _, _, newValue ->
+                if (newValue == 0 && numberPickerEnd.value == 23) {
+                    numberPickerEnd.value = 0
+                } else {
+                    if (newValue >= numberPickerEnd.value) {
+                        numberPickerEnd.value = newValue
+                    }
                 }
             }
-        }
 
-        binding.numberPickerEnd.setOnValueChangedListener { _, _, newValue ->
-            if (newValue == 23 && binding.numberPickerStart.value == 0) {
-                binding.numberPickerStart.value = 23
-            } else {
-                if (newValue <= binding.numberPickerStart.value) {
-                    binding.numberPickerStart.value = newValue
+            numberPickerEnd.setOnValueChangedListener { _, _, newValue ->
+                if (newValue == 23 && numberPickerStart.value == 0) {
+                    numberPickerStart.value = 23
+                } else {
+                    if (newValue <= numberPickerStart.value) {
+                        numberPickerStart.value = newValue
+                    }
                 }
             }
         }

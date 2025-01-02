@@ -36,17 +36,19 @@ class TaskDetailsActivity : AppCompatActivity() {
 
     private fun observeViewModel() {
         taskDetailsViewModel.taskLD.observe(this) {
-            binding.title.text = it.name
             val startHour = "${it.dateStart.hour.toString().padStart(2, '0')}:00"
             val finishHour = "${it.dateFinish.hour.toString().padStart(2, '0')}:00"
-            binding.time.text = getString(R.string.time, startHour, finishHour)
-            binding.date.text = getString(
-                R.string.date,
-                it.dateStart.dayOfMonth.toString().padStart(2, '0'),
-                it.dateStart.month.value.toString().padStart(2, '0'),
-                it.dateStart.year.toString()
-            )
-            binding.description.text = it.description
+            with(binding) {
+                title.text = it.name
+                time.text = getString(R.string.time, startHour, finishHour)
+                date.text = getString(
+                    R.string.date,
+                    it.dateStart.dayOfMonth.toString().padStart(2, '0'),
+                    it.dateStart.month.value.toString().padStart(2, '0'),
+                    it.dateStart.year.toString()
+                )
+                description.text = it.description
+            }
         }
     }
 
