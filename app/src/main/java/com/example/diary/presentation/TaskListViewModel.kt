@@ -86,8 +86,12 @@ class TaskListViewModel @Inject constructor(getTaskListUseCase: GetTaskListUseCa
     fun tapTheCat() {
         if (isToastVisible) {
             tapTheCatCounter++
-            if (tapTheCatCounter == 5) {
-                tapTheCatCounter = 0
+            if (tapTheCatCounter == 1) {
+                viewModelScope.launch {
+                    delay(1500)
+                    tapTheCatCounter = 0
+                }
+            } else if (tapTheCatCounter == 5) {
                 isToastVisible = false
                 _catToast.value = true
                 viewModelScope.launch {
